@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <link rel="stylesheet" href="css/index.css">
+        <title>ROD'SS TV - IPTV</title>
+    </head>
+    <body>
+
+        <!-- ÉCRAN D'AUTHENTIFICATION -->
+        <div id="authOverlay" class="auth-overlay">
+            <div class="auth-card">
+                <div class="auth-logo">ROD'SS <span>TV</span></div>
+                <p class="auth-subtitle">Connexion sécurisée requise</p>
+                
+                <form id="authForm">
+                    <div class="input-group">
+                        <label>Nom d'utilisateur</label>
+                        <input type="text" id="authUser" placeholder="Ex: Rodrigue" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <label>Mot de passe</label>
+                        <input type="password" id="authPass" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn">Se connecter</button>
+                </form>
+                <p id="authError" class="auth-error hidden">Identifiants incorrects.</p>
+            </div>
+        </div>
+
+        <!-- Écran de chargement -->
+        <div id="loaderOverlay" class="loader-overlay hidden">
+            <div class="spinner"></div>
+            <p id="loaderText">Téléchargement des chaînes...</p>
+        </div>
+
+        <!-- En-tête -->
+        <header class="top-bar">
+            <div class="logo">ROD'SS <span>TV IPTV</span></div>
+            <div class="header-right">
+                <div class="user-badge" id="netStatus">Vérification...</div>
+            </div>
+        </header>
+
+        <!-- Groupe de boutons flottants -->
+        <div class="floating-top-right-group">
+            <div class="menu-container">
+                <button id="btnMenu" class="floating-menu-btn" title="Menu">⋮</button>
+                <div id="dropdownMenu" class="dropdown-menu hidden">
+                    <button id="menuRecord">🎥 Enregistrement</button>
+                    <button id="menuShare">📤 Partager l'application</button>
+                    <button id="menuCast">📺 Projeter l'écran</button>
+                    <button id="menuHelp">💡 Aide & Utilisation</button>
+                    <button id="menuLogout">🚪 Déconnexion</button>
+                </div>
+            </div>
+            <button id="btnToggleFullscreen" class="floating-fullscreen-btn" title="Plein écran total">⛶</button>
+        </div>
+
+        <!-- Vues principales -->
+        <main class="main-content">
+            <section id="view-direct" class="view-section active">
+                <div class="player-wrapper" id="playerWrapper">
+                    <video id="videoPlayer" controls autoplay playsinline preload="auto">
+                        Votre navigateur ne supporte pas la lecture vidéo.
+                    </video>
+                </div>
+
+                <div class="now-playing-info">
+                    <div>
+                        <h3 id="currentChannelName">Sélectionnez une chaîne</h3>
+                        <p id="currentProgram">Flux directs (France)</p>
+                    </div>
+                    <button id="btnFavToggle" class="fav-btn">Favoris</button>
+                </div>
+
+                <div class="channels-controls-bar">
+                    <input type="text" id="searchChannel" placeholder="Rechercher...">
+                    <button id="btnOpenCategories" class="category-filter-btn">📂 Catégories</button>
+                </div>
+
+                <div class="themes-bar">
+                    <button class="theme-chip active" data-theme="all">Tout</button>
+                    <button class="theme-chip" data-theme="movie">🎬 Films</button>
+                    <button class="theme-chip" data-theme="series">📺 Séries</button>
+                    <button class="theme-chip" data-theme="music">🎵 Musique</button>
+                    <button class="theme-chip" data-theme="doc">🌍 Documentaires</button>
+                    <button class="theme-chip" data-theme="sport">⚽ Sport</button>
+                    <button class="theme-chip" data-theme="news">📰 Actualités</button>
+                </div>
+
+                <div id="categoriesDropdownPanel" class="categories-panel hidden">
+                    <div class="categories-header">
+                        <span>Choisir une catégorie</span>
+                        <button id="btnCloseCategories" class="close-cat-btn">✕</button>
+                    </div>
+                    <div id="categoriesList" class="categories-list"></div>
+                </div>
+
+                <div class="channels-container">
+                    <div id="channelsList" class="channels-list"></div>
+                </div>
+            </section>
+
+            <section id="view-favoris" class="view-section">
+                <h2 class="section-title">Mes Favoris</h2>
+                <div class="settings-card">
+                    <div id="favList" class="channels-list">
+                        <p class="empty-msg">Aucun favori enregistré.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-reglages" class="view-section settings-view">
+                <h2 class="section-title">Réglages</h2>
+                <div class="settings-card">
+                    <p><strong>Statut connexion :</strong> <span id="settingsConnText">Vérification...</span></p>
+                    <p><strong>Contact :</strong> rodriguedisasi15@gmail.com</p>
+                    <button id="btnReload" class="action-btn">Recharger la liste</button>
+                    <button id="btnLogoutSettings" class="action-btn" style="background:#333344; margin-top:8px;">Se déconnecter</button>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav" id="bottomNav">
+            <button class="nav-item active" data-target="view-direct">
+                <span class="icon">📺</span>
+                <span>Direct</span>
+            </button>
+            <button class="nav-item" data-target="view-favoris">
+                <span class="icon">⭐</span>
+                <span>Favoris</span>
+            </button>
+            <button class="nav-item" data-target="view-reglages">
+                <span class="icon">⚙️</span>
+                <span>Réglages</span>
+            </button>
+        </nav>
+
+        <script src="cordova.js"></script>
+        <script src="js/index.js"></script>
+    </body>
+</html>

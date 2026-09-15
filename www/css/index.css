@@ -1,0 +1,539 @@
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #0f0f14;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Écran d'authentification */
+.auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0f0f14;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20000;
+}
+
+.auth-overlay.hidden {
+    display: none;
+}
+
+.auth-card {
+    background: #16161e;
+    border: 1px solid #333344;
+    padding: 24px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 340px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.auth-logo {
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    text-align: center;
+}
+
+.auth-logo span {
+    color: #ff0055;
+}
+
+.auth-subtitle {
+    font-size: 11px;
+    color: #8a8a9e;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.input-group label {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.input-group input {
+    padding: 10px 12px;
+    background: #1a1a24;
+    border: 1px solid #333344;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.auth-submit-btn {
+    background: #ff0055;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.auth-error {
+    color: #ff0055;
+    font-size: 11px;
+    text-align: center;
+}
+
+.auth-error.hidden {
+    display: none;
+}
+
+/* Groupe flottant en haut à droite */
+.floating-top-right-group {
+    position: fixed;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10000;
+}
+
+.floating-menu-btn, .floating-fullscreen-btn {
+    background: rgba(22, 22, 30, 0.85);
+    border: 1px solid #333344;
+    color: #fff;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.menu-container {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 42px;
+    background: #1a1a24;
+    border: 1px solid #333344;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    z-index: 10001;
+    width: 210px;
+}
+
+.dropdown-menu.hidden {
+    display: none;
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #232330;
+}
+
+.dropdown-menu button:active {
+    background: #ff0055;
+}
+
+/* Mode Immersif */
+body.immersive-mode .top-bar,
+body.immersive-mode .channels-controls-bar,
+body.immersive-mode .themes-bar,
+body.immersive-mode .categories-panel,
+body.immersive-mode .channels-container,
+body.immersive-mode .now-playing-info,
+body.immersive-mode .bottom-nav {
+    display: none !important;
+}
+
+body.immersive-mode .player-wrapper {
+    height: 100vh !important;
+    flex: none;
+}
+
+/* Loader Overlay */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #0f0f14;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+.loader-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #232330;
+    border-top: 5px solid #ff0055;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loaderText {
+    color: #8a8a9e;
+    font-size: 13px;
+}
+
+/* Header */
+.top-bar {
+    background-color: #16161e;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #232330;
+    z-index: 100;
+}
+
+.logo {
+    font-weight: 900;
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.logo span {
+    color: #ff0055;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    margin-right: 90px;
+}
+
+.user-badge {
+    background-color: #333344;
+    color: #fff;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.user-badge.online { background-color: #00e676; color: #000; }
+.user-badge.offline { background-color: #ff0055; }
+
+/* Vues principales */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding-bottom: 55px;
+    display: flex;
+    flex-direction: column;
+}
+
+.view-section {
+    display: none;
+    height: 100%;
+    flex: 1;
+    flex-direction: column;
+}
+
+.view-section.active {
+    display: flex;
+}
+
+/* Lecteur Vidéo */
+.player-wrapper {
+    width: 100%;
+    height: 220px;
+    background-color: #000;
+    position: relative;
+    flex-shrink: 0;
+}
+
+#videoPlayer {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.now-playing-info {
+    padding: 10px 16px;
+    background: #16161e;
+    border-top: 1px solid #232330;
+    border-bottom: 1px solid #232330;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.now-playing-info h3 { font-size: 14px; color: #fff; }
+.now-playing-info p { font-size: 11px; color: #8a8a9e; }
+
+.fav-btn {
+    background: #232330;
+    border: none;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+}
+.fav-btn.is-fav { background: #ff0055; }
+
+/* Barre de contrôles */
+.channels-controls-bar {
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #12121a;
+    border-bottom: 1px solid #232330;
+    flex-shrink: 0;
+}
+
+.channels-controls-bar input {
+    flex: 1;
+    padding: 8px 12px;
+    background: #1a1a24;
+    border: 1px solid #333344;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
+}
+
+.category-filter-btn {
+    background: #232330;
+    border: 1px solid #333344;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Barre des thématiques */
+.themes-bar {
+    display: flex;
+    gap: 6px;
+    padding: 8px 10px;
+    background: #16161e;
+    border-bottom: 1px solid #232330;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: none;
+}
+.themes-bar::-webkit-scrollbar { display: none; }
+
+.theme-chip {
+    background: #232330;
+    border: 1px solid #333344;
+    color: #aaa;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.theme-chip.active {
+    background: #ff0055;
+    border-color: #ff0055;
+    color: #fff;
+}
+
+/* Panneau déroulant des catégories M3U */
+.categories-panel {
+    background: #16161e;
+    border-bottom: 1px solid #333344;
+    max-height: 200px;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+
+.categories-panel.hidden { display: none; }
+
+.categories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #1a1a24;
+    font-size: 12px;
+    font-weight: bold;
+    color: #ff0055;
+    border-bottom: 1px solid #232330;
+}
+
+.close-cat-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.categories-list {
+    overflow-y: auto;
+    max-height: 160px;
+}
+
+.category-item {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: #ddd;
+    border-bottom: 1px solid #222230;
+    cursor: pointer;
+}
+
+.category-item:active {
+    background: #ff0055;
+    color: #fff;
+}
+
+/* Liste des chaînes */
+.channels-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #0f0f14;
+    overflow: hidden;
+}
+
+.channels-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.channel-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a1a24;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.channel-item:active { background: #ff0055; }
+
+.channel-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.channel-name { font-size: 13px; color: #ffffff; }
+.channel-cat-badge {
+    background: #232330;
+    color: #8a8a9e;
+    font-size: 9px;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+/* Réglages */
+.settings-view { padding: 20px; }
+.settings-card {
+    background: #16161e;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px;
+}
+.section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #8a8a9e;
+    margin: 20px 20px 0 20px;
+}
+.action-btn {
+    background: #ff0055;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.empty-msg { color: #8a8a9e; font-size: 12px; text-align: center; padding: 20px; }
+
+/* Navigation Basse */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55px;
+    background-color: #16161e;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #232330;
+    z-index: 10;
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: #71718a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.nav-item .icon { font-size: 15px; margin-bottom: 2px; }
+.nav-item.active { color: #ff0055; }
