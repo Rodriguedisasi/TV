@@ -1616,6 +1616,7 @@ function updateStats() {
             if (email === MAIN_ADMIN_EMAIL.toLowerCase()) { toast("C'est l'admin fondateur, déjà admin.", 'info'); return; }
             const user = usersCache.find(x => (x.email || "").toLowerCase() === email);
             if (!user) { toast("Aucun utilisateur inscrit avec cet e-mail.", 'err'); return; }
+            if (user.emailVerified !== true) { toast("Adresse e-mail non vérifiée : cet utilisateur doit d'abord confirmer son e-mail.", 'err'); return; }
             if (adminsCache.some(a => (a.email || "").toLowerCase() === email)) { toast("Cet utilisateur est déjà admin.", 'info'); return; }
 
             const btn = $('adminAddBtn');
