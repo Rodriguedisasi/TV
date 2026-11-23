@@ -1,0 +1,23 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/playlist.m3u
+  Access-Control-Allow-Origin: *
+  Content-Type: application/vnd.apple.mpegurl
+  Cache-Control: public, max-age=300
+
+/version.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: no-store
+
+/admin.html
+  Cache-Control: no-cache
+
+/js/*
+  Cache-Control: public, max-age=3600
+
+/css/*
+  Cache-Control: public, max-age=3600

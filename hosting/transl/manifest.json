@@ -1,0 +1,20 @@
+{
+  "name": "Rod'ss Traduction",
+  "short_name": "Traduction",
+  "description": "Traduire le texte affiché à l'écran (OCR + traduction)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A0E17",
+  "theme_color": "#FFD400",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

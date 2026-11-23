@@ -1,0 +1,9 @@
+{
+  "name": "rodrigue-tv",
+  "version": "1.0.0",
+  "description": "Application Rodrigue TV avec Firebase Auth",
+  "type": "module",
+  "dependencies": {
+    "firebase": "^10.8.0"
+  }
+}

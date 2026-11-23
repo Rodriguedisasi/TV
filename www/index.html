@@ -1,144 +1,498 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' gap: data: blob:; script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' blob: data: https:; img-src 'self' data: content: blob: https:; connect-src 'self' https: wss: blob:; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <meta name="theme-color" content="#0a0a12">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/index.css">
-        <title>ROD'SS TV - IPTV</title>
+        <link rel="icon" type="image/png" href="img/logo.png">
+        <title>ROD'SS TV</title>
     </head>
     <body>
 
-        <!-- ÉCRAN D'AUTHENTIFICATION -->
-        <div id="authOverlay" class="auth-overlay">
+        <!-- ==== ÉCRAN D'AUTHENTIFICATION ==== -->
+        <div id="authOverlay" class="auth-overlay hidden">
+            <div class="auth-glow"></div>
+            <div class="auth-orb orb-1"></div>
+            <div class="auth-orb orb-2"></div>
             <div class="auth-card">
-                <div class="auth-logo">ROD'SS <span>TV</span></div>
-                <p class="auth-subtitle">Connexion sécurisée requise</p>
-                
-                <form id="authForm">
-                    <div class="input-group">
-                        <label>Nom d'utilisateur</label>
-                        <input type="text" id="authUser" placeholder="Ex: Rodrigue" required autocomplete="username">
+                <div class="auth-logo">
+                    <img src="img/logo.png" alt="ROD'SS TV" class="auth-logo-img">
+                </div>
+                <h1 class="auth-brand">ROD'SS <span>TV</span></h1>
+                <p id="authSubtitle" class="auth-subtitle">Connectez-vous pour profiter de l'application</p>
+
+                <form id="authForm" novalidate>
+                    <div id="nameFieldContainer" class="input-group hidden">
+                        <label for="authName">Nom complet</label>
+                        <div class="input-with-icon">
+                            <svg class="input-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+                            <input type="text" id="authName" placeholder="Ex: Rodrigue Disasi" autocomplete="name">
+                        </div>
                     </div>
                     <div class="input-group">
-                        <label>Mot de passe</label>
-                        <input type="password" id="authPass" placeholder="••••••••" required autocomplete="current-password">
+                        <label for="authEmail">Adresse e-mail</label>
+                        <div class="input-with-icon">
+                            <svg class="input-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+                            <input type="email" id="authEmail" required placeholder="votre@email.com" autocomplete="email">
+                        </div>
                     </div>
-                    <button type="submit" class="auth-submit-btn">Se connecter</button>
+                    <div class="input-group">
+                        <label for="authPassword">Mot de passe</label>
+                        <div class="password-wrapper">
+                            <svg class="input-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="authPassword" required placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" id="togglePasswordBtn" class="toggle-password-btn" title="Afficher le mot de passe" aria-label="Afficher le mot de passe">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="forgot-row">
+                        <a href="#" id="forgotPasswordLink" class="forgot-password">Mot de passe oublié ?</a>
+                    </div>
+
+                    <div id="authErrorMessage" class="auth-error-message hidden" role="alert"></div>
+
+                    <button type="submit" id="authSubmitBtn" class="action-btn auth-btn">
+                        <span class="ico ico-user"></span><span>Se connecter</span>
+                    </button>
                 </form>
-                <p id="authError" class="auth-error hidden">Identifiants incorrects.</p>
+
+                <p class="auth-switch">
+                    <span id="authSwitchText">Pas encore de compte ?</span>
+                    <a href="#" id="authSwitchBtn">S'inscrire</a>
+                </p>
             </div>
         </div>
 
-        <!-- Écran de chargement -->
-        <div id="loaderOverlay" class="loader-overlay hidden">
-            <div class="spinner"></div>
-            <p id="loaderText">Téléchargement des chaînes...</p>
+        <!-- ==== TOASTS ==== -->
+        <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+        <!-- ==== BOÎTE DE CONFIRMATION ==== -->
+        <div id="confirmOverlay" class="confirm-overlay hidden">
+            <div class="confirm-box">
+                <h3 id="confirmTitle">Confirmer</h3>
+                <p id="confirmMessage"></p>
+                <div class="confirm-actions">
+                    <button id="confirmCancel" class="btn-ghost" type="button"><span class="ico ico-x"></span> Annuler</button>
+                    <button id="confirmOk" class="action-btn" type="button" style="padding: 10px 22px;"><span class="ico ico-check"></span> OK</button>
+                </div>
+            </div>
         </div>
 
-        <!-- En-tête -->
+        <!-- ==== PROFIL UTILISATEUR ==== -->
+        <div id="profileModal" class="profile-overlay hidden">
+            <div class="profile-box">
+                <div class="profile-cover">
+                    <button id="profileClose" class="profile-close" type="button" aria-label="Fermer">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                    <div class="profile-avatar" id="profileAvatar">—</div>
+                    <div class="profile-title">
+                        <h3 id="profileName">Utilisateur</h3>
+                        <p id="profileEmail">—</p>
+                    </div>
+                </div>
+                <div class="profile-body">
+                    <div class="profile-rows">
+                        <div class="profile-row">
+                            <span><span class="ico ico-user"></span> Statut</span>
+                            <strong id="profileStatus">Connecté</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span><span class="ico ico-diamond"></span> Abonnement</span>
+                            <strong id="profileSubscription">Gratuit</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span><span class="ico ico-globe"></span> Compte</span>
+                            <strong id="profileProvider">—</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span><span class="ico ico-calendar"></span> Membre depuis</span>
+                            <strong id="profileSince">—</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span><span class="ico ico-star-filled"></span> Favoris</span>
+                            <strong id="profileFavCount">0</strong>
+                        </div>
+                    </div>
+                    <button id="profileSubsManage" class="profile-subs-btn" type="button">
+                        <span class="menu-icon"><span class="ico ico-diamond"></span></span><span>Gérer mon abonnement</span>
+                    </button>
+                    <button id="profileLogout" class="profile-logout-btn" type="button">
+                        <span class="menu-icon"><span class="ico ico-logout"></span></span><span>Se déconnecter</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== INDICATEUR D'ENREGISTREMENT ==== -->
+        <div id="recPill" class="rec-pill hidden" role="status" aria-live="polite">
+            <span class="rec-dot"></span>
+            <span id="recTime">00:00</span>
+        </div>
+
+        <!-- ==== FEUILLE AIDE ==== -->
+        <div id="helpModal" class="sheet-overlay hidden">
+            <div class="sheet-box">
+                <div class="sheet-head">
+                    <h3><span class="ico ico-lightbulb"></span> Aide &amp; Utilisation</h3>
+                    <button id="helpClose" class="sheet-close" type="button" aria-label="Fermer"><span class="ico ico-x"></span></button>
+                </div>
+                <div class="sheet-body">
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-antenna"></span> Écran Direct</h4>
+                        <p>Saisissez un mot-clé dans la barre de recherche ou filtrez par catégories (Général, Sport, Musique, Actu, Autre).</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-star-filled"></span> Favoris</h4>
+                        <p>Le bouton étoile ajoute ou retire la chaîne en cours de vos favoris. Ils sont sauvegardés sur votre compte.</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-search"></span> Zoom &amp; Navigation</h4>
+                        <p>Les flèches <span class="ico ico-arrow-left"></span> / <span class="ico ico-arrow-right"></span> changent de chaîne. Les boutons <span class="ico ico-minus"></span> <span class="ico ico-plus"></span> ajustent le zoom, <span class="ico ico-refresh"></span> le réinitialise.</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-maximize"></span> Mode immersif</h4>
+                        <p>Le bouton en haut à droite masque les menus pour profiter du flux en grand écran.</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-video"></span> Enregistrement</h4>
+                        <p>« Menu <span class="ico ico-arrow-right"></span> Enregistrement » capture votre écran pendant la lecture. Le fichier vidéo est téléchargé automatiquement à l'arrêt.</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-tv"></span> Projection</h4>
+                        <p>« Menu <span class="ico ico-arrow-right"></span> Projeter l'écran » ouvre le flux en plein écran ou partage le lien vers un autre appareil (TV, box, téléphone).</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-diamond"></span> Abonnements</h4>
+                        <p>« Menu <span class="ico ico-arrow-right"></span> Abonnements » : choisissez PRO ou PREMIUM pour débloquer Cinéma, Documentaires et Business. Paiement par Mobile Money, activation sous 24h.</p>
+                    </div>
+                    <div class="sheet-section">
+                        <h4><span class="ico ico-briefcase"></span> Espace Pro</h4>
+                        <p>« Menu <span class="ico ico-arrow-right"></span> Espace Pro » : partenariats, publicité, contact business et abonnement à la newsletter.</p>
+                    </div>
+
+                    <div class="sheet-contact">
+                        <p class="sheet-contact-title">Besoin d'aide ou une suggestion ?</p>
+                        <button id="helpEmail" class="sheet-contact-row" type="button">
+                            <span><span class="ico ico-mail"></span> rodriguedisasi15@gmail.com</span>
+                            <span class="contact-action">Copier</span>
+                        </button>
+                        <button id="helpWhatsapp" class="sheet-contact-row" type="button">
+                            <span><span class="ico ico-message"></span> WhatsApp +243 997 555 148</span>
+                            <span class="contact-action">Ouvrir</span>
+                        </button>
+                        <button id="helpCall" class="sheet-contact-row" type="button">
+                            <span><span class="ico ico-phone"></span> Appeler +243 840 884 348</span>
+                            <span class="contact-action">Appeler</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== FEUILLE PROJECTION ==== -->
+        <div id="castModal" class="sheet-overlay hidden">
+            <div class="sheet-box">
+                <div class="sheet-head">
+                    <h3><span class="ico ico-tv"></span> Projeter l'écran</h3>
+                    <button id="castClose" class="sheet-close" type="button" aria-label="Fermer"><span class="ico ico-x"></span></button>
+                </div>
+                <div class="sheet-body">
+                    <p class="cast-current" id="castCurrent">Aucune chaîne en cours.</p>
+                    <button id="castFullscreen" class="cast-option" type="button">
+                        <span class="cast-emoji"><span class="ico ico-monitor"></span></span>
+                        <span><strong>Plein écran (cet appareil)</strong><small>Ouvre le flux en grand écran</small></span>
+                    </button>
+                    <button id="castShare" class="cast-option" type="button">
+                        <span class="cast-emoji"><span class="ico ico-upload"></span></span>
+                        <span><strong>Envoyer vers un autre appareil</strong><small>Partage le lien vers une TV, box ou téléphone</small></span>
+                    </button>
+                    <button id="castCopy" class="cast-option" type="button">
+                        <span class="cast-emoji"><span class="ico ico-link"></span></span>
+                        <span><strong>Copier le lien du flux</strong><small>Collez-le où vous le souhaitez</small></span>
+                    </button>
+                    <p class="cast-note">Astuce : sur la TV, ouvrez le lien dans le navigateur ou dans l'app du lecteur pour regarder le flux.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==== CHARGEMENT / ATTENTE RÉSEAU ==== -->
+        <div id="loaderOverlay" class="loader-overlay">
+            <div class="loader-ring">
+                <div class="spinner"></div>
+                <img src="img/logo.png" alt="" class="loader-logo">
+            </div>
+            <p id="loaderText">Connexion instable... En attente du réseau...</p>
+            <div class="loader-bar" aria-hidden="true"></div>
+        </div>
+
+        <!-- ==== EN-TÊTE ==== -->
         <header class="top-bar">
-            <div class="logo">ROD'SS <span>TV IPTV</span></div>
+            <div class="logo">
+                <img src="img/logo.png" alt="" class="logo-img">
+                <span class="logo-text">ROD'SS <em>TV</em></span>
+            </div>
             <div class="header-right">
-                <div class="user-badge" id="netStatus">Vérification...</div>
+                <div class="net-pill" id="netStatus">Vérification...</div>
             </div>
         </header>
 
-        <!-- Groupe de boutons flottants -->
+        <!-- ==== BOUTONS FLOTTANTS ==== -->
         <div class="floating-top-right-group">
             <div class="menu-container">
-                <button id="btnMenu" class="floating-menu-btn" title="Menu">⋮</button>
+                <button id="btnMenu" class="floating-menu-btn" title="Menu" type="button" aria-label="Menu">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
+                </button>
                 <div id="dropdownMenu" class="dropdown-menu hidden">
-                    <button id="menuRecord">🎥 Enregistrement</button>
-                    <button id="menuShare">📤 Partager l'application</button>
-                    <button id="menuCast">📺 Projeter l'écran</button>
-                    <button id="menuHelp">💡 Aide & Utilisation</button>
-                    <button id="menuLogout">🚪 Déconnexion</button>
+                    <button id="menuRecord" type="button"><span class="menu-icon"><span class="ico ico-video"></span></span><span>Enregistrement</span></button>
+                    <button id="menuShare" type="button"><span class="menu-icon"><span class="ico ico-upload"></span></span><span>Partager l'application</span></button>
+                    <button id="menuCast" type="button"><span class="menu-icon"><span class="ico ico-tv"></span></span><span>Projeter l'écran</span></button>
+                    <button id="menuSubs" type="button"><span class="menu-icon"><span class="ico ico-diamond"></span></span><span>Abonnements</span></button>
+                    <button id="menuPro" type="button"><span class="menu-icon"><span class="ico ico-briefcase"></span></span><span>Espace Pro &amp; Newsletter</span></button>
+                    <button id="menuHelp" type="button"><span class="menu-icon"><span class="ico ico-lightbulb"></span></span><span>Aide &amp; Utilisation</span></button>
+                    <button id="menuLogout" type="button" class="menu-danger"><span class="menu-icon"><span class="ico ico-logout"></span></span><span>Se déconnecter</span></button>
                 </div>
             </div>
-            <button id="btnToggleFullscreen" class="floating-fullscreen-btn" title="Plein écran total">⛶</button>
+            <button id="btnToggleFullscreen" class="floating-fullscreen-btn" title="Mode immersif" type="button" aria-label="Mode immersif">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+            </button>
+            <button id="btnProfile" class="floating-profile-btn" title="Profil" type="button" aria-label="Profil">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+            </button>
         </div>
 
-        <!-- Vues principales -->
+        <!-- ==== VUES PRINCIPALES ==== -->
         <main class="main-content">
+
+            <!-- VUE DIRECT -->
             <section id="view-direct" class="view-section active">
+
+                <!-- Bande de recherche et catégories -->
+                <div class="channels-bar" id="channelsBar">
+                    <div class="search-container">
+                        <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="searchInput" placeholder="Rechercher une chaîne ou un flux..." data-i18n-placeholder="search.placeholder">
+                    </div>
+                    <div class="categories-scroll" id="categoriesContainer"></div>
+                </div>
+
+                <!-- Grille des chaînes -->
+                <div class="channels-grid-bar" id="channelsGrid"></div>
+
+                <!-- Lecteur -->
                 <div class="player-wrapper" id="playerWrapper">
-                    <video id="videoPlayer" controls autoplay playsinline preload="auto">
-                        Votre navigateur ne supporte pas la lecture vidéo.
-                    </video>
+                    <div class="player-loader hidden" id="playerLoader"><div class="mini-spinner"></div></div>
+                    <div class="player-empty" id="playerEmpty">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
+                        </div>
+                        <h3 data-i18n="player.empty.title">Aucune chaîne disponible</h3>
+                        <p data-i18n-html="player.empty.text">La liste des chaînes est vide pour le moment.<br>Elles seront bientôt ajoutées.</p>
+                    </div>
+                    <video id="videoPlayer" controls autoplay playsinline preload="auto"></video>
                 </div>
 
+                <!-- Contrôles zoom & navigation -->
+                <div class="zoom-controls">
+                    <button id="btnBack" class="zoom-btn" title="Chaîne précédente" type="button">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        <span>Retour</span>
+                    </button>
+                    <button id="btnQuickFav" class="zoom-btn" title="Ajouter aux favoris" type="button" aria-label="Favoris">
+                        <svg class="star" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </button>
+                    <button id="btnForward" class="zoom-btn" title="Chaîne suivante" type="button">
+                        <span>Aller</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                    <span class="separator">|</span>
+                    <button id="btnZoomOut" class="zoom-btn icon-only" title="Réduire" type="button"><span class="ico ico-minus"></span></button>
+                    <button id="btnZoomReset" class="zoom-btn icon-only" title="Réinitialiser le zoom" type="button"><span class="ico ico-refresh"></span></button>
+                    <button id="btnZoomIn" class="zoom-btn icon-only" title="Agrandir" type="button"><span class="ico ico-plus"></span></button>
+                </div>
+
+                <!-- Infos en cours de lecture -->
                 <div class="now-playing-info">
-                    <div>
-                        <h3 id="currentChannelName">Sélectionnez une chaîne</h3>
-                        <p id="currentProgram">Flux directs (France)</p>
+                    <div class="now-playing-detail">
+                        <div class="channel-avatar" id="channelAvatar">—</div>
+                        <div class="now-playing-text">
+                            <h3 id="currentChannelName">Aucune chaîne</h3>
+                            <p id="currentProgram">En attente de chaînes...</p>
+                            <span id="qualityBadge" class="quality-badge sd">HD · Haute qualité</span>
+                        </div>
                     </div>
-                    <button id="btnFavToggle" class="fav-btn">Favoris</button>
-                </div>
-
-                <div class="channels-controls-bar">
-                    <input type="text" id="searchChannel" placeholder="Rechercher...">
-                    <button id="btnOpenCategories" class="category-filter-btn">📂 Catégories</button>
-                </div>
-
-                <div class="themes-bar">
-                    <button class="theme-chip active" data-theme="all">Tout</button>
-                    <button class="theme-chip" data-theme="movie">🎬 Films</button>
-                    <button class="theme-chip" data-theme="series">📺 Séries</button>
-                    <button class="theme-chip" data-theme="music">🎵 Musique</button>
-                    <button class="theme-chip" data-theme="doc">🌍 Documentaires</button>
-                    <button class="theme-chip" data-theme="sport">⚽ Sport</button>
-                    <button class="theme-chip" data-theme="news">📰 Actualités</button>
-                </div>
-
-                <div id="categoriesDropdownPanel" class="categories-panel hidden">
-                    <div class="categories-header">
-                        <span>Choisir une catégorie</span>
-                        <button id="btnCloseCategories" class="close-cat-btn">✕</button>
-                    </div>
-                    <div id="categoriesList" class="categories-list"></div>
-                </div>
-
-                <div class="channels-container">
-                    <div id="channelsList" class="channels-list"></div>
+                    <button id="btnFavToggle" class="fav-btn" type="button"><span class="star" aria-hidden="true"><span class="ico ico-star-outline"></span></span><span>Favoris</span></button>
                 </div>
             </section>
 
+            <!-- VUE FAVORIS -->
             <section id="view-favoris" class="view-section">
-                <h2 class="section-title">Mes Favoris</h2>
-                <div class="settings-card">
-                    <div id="favList" class="channels-list">
-                        <p class="empty-msg">Aucun favori enregistré.</p>
-                    </div>
+                <h2 class="section-title" data-i18n="favorites.title">Mes Favoris</h2>
+                <div class="settings-card" id="favoritesContainerList">
+                    <p class="empty-msg">Aucun favori enregistré pour le moment.</p>
                 </div>
             </section>
 
+            <!-- VUE RÉGLAGES -->
             <section id="view-reglages" class="view-section settings-view">
-                <h2 class="section-title">Réglages</h2>
+                <h2 class="section-title" data-i18n="settings.title">Réglages &amp; Profil</h2>
                 <div class="settings-card">
-                    <p><strong>Statut connexion :</strong> <span id="settingsConnText">Vérification...</span></p>
-                    <p><strong>Contact :</strong> rodriguedisasi15@gmail.com</p>
-                    <button id="btnReload" class="action-btn">Recharger la liste</button>
-                    <button id="btnLogoutSettings" class="action-btn" style="background:#333344; margin-top:8px;">Se déconnecter</button>
+                    <div class="profile-row">
+                        <div class="channel-avatar large" id="settingsAvatar">R</div>
+                        <div>
+                            <p class="profile-name" id="settingsUserName">-</p>
+                            <p class="profile-email" id="settingsUserEmail">-</p>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="settings.connection">Statut connexion</span>
+                        <strong id="settingsConnText">Vérification...</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span><span class="ico ico-diamond"></span> <span data-i18n="settings.subscription">Abonnement</span></span>
+                        <strong id="settingsSubscription">Gratuit</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="settings.contact">Contact / Suggestions</span>
+                        <strong>rodriguedisasi15@gmail.com</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="settings.whatsapp">WhatsApp</span>
+                        <strong>+243997555148</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span data-i18n="settings.call">Appel</span>
+                        <strong>+243840884348</strong>
+                    </div>
+                    <div class="setting-row">
+                        <span><span class="ico ico-globe"></span> <span data-i18n="settings.language">Langue</span></span>
+                        <select id="appLang" class="lang-select" aria-label="Langue" data-i18n-label="settings.language">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                        </select>
+                    </div>
+                    <button id="btnManageSubs" class="action-btn" type="button"><span class="ico ico-diamond"></span> <span data-i18n="settings.manage">Gérer mon abonnement</span></button>
+                    <button id="btnLogout" class="action-btn secondary-btn" type="button"><span class="ico ico-logout"></span> <span data-i18n="settings.logout">Se déconnecter</span></button>
+                    <button id="btnReload" class="action-btn" type="button"><span class="ico ico-refresh"></span> <span data-i18n="settings.reload">Rafraîchir l'application</span></button>
                 </div>
             </section>
+
+            <!-- VUE ABONNEMENTS -->
+            <section id="view-abonnement" class="view-section subs-view">
+                <h2 class="section-title" data-i18n="subs.title">Abonnements</h2>
+
+                <div class="subs-hero" id="subsHero">
+                    <div class="subs-hero-badge" id="subsCurrentBadge"><span class="ico ico-gift"></span> GRATUIT</div>
+                    <h3 id="subsCurrentTitle">Vous êtes sur le plan GRATUIT</h3>
+                    <p>Passez à <strong>PRO</strong> ou <strong>PREMIUM</strong> pour débloquer tout le catalogue : Cinéma, Documentaires, Business et bien plus.</p>
+                </div>
+
+                <div class="plans-grid" id="plansGrid">
+                    <!-- Injecté dynamiquement -->
+                </div>
+
+                <div class="subs-note">
+                    <p><span class="ico ico-lightbulb"></span> <strong>Comment ça marche ?</strong></p>
+                    <p>1. Choisissez votre formule ci-dessus.</p>
+                    <p>2. Payez par Mobile Money (M-Pesa, Airtel Money, Orange Money) au numéro affiché.</p>
+                    <p>3. Envoyez le reçu sur WhatsApp +243 997 555 148.</p>
+                    <p>4. Votre compte est activé sous 24h et toutes les chaînes se débloquent !</p>
+                </div>
+            </section>
+
+            <!-- VUE ESPACE PRO -->
+            <section id="view-pro" class="view-section pro-view">
+                <h2 class="section-title" data-i18n="pro.title">Espace Professionnel</h2>
+
+                <div class="pro-hero">
+                    <div class="pro-hero-logo"><span class="ico ico-briefcase"></span></div>
+                    <h3>ROD'SS TV — Solutions d'entreprise</h3>
+                    <p>Diffusez vos contenus, sponsorisez le catalogue ou publiez vos actualités auprès de milliers de téléspectateurs.</p>
+                </div>
+
+                <div class="settings-card">
+                    <h3 class="pro-card-title"><span class="ico ico-newspaper"></span> Newsletter</h3>
+                    <p class="pro-card-sub">Recevez les nouveautés, les meilleures chaînes et les offres avant tout le monde.</p>
+                    <form id="newsletterForm" novalidate>
+                        <input type="text" id="nlName" placeholder="Votre nom complet" autocomplete="name">
+                        <input type="email" id="nlEmail" placeholder="votre@email.com" autocomplete="email">
+                        <button type="submit" class="action-btn" id="nlSubmitBtn"><span class="ico ico-mail"></span> S'abonner à la newsletter</button>
+                    </form>
+                    <p class="pro-card-status" id="newsletterStatus"></p>
+                </div>
+
+                <div class="settings-card">
+                    <h3 class="pro-card-title"><span class="ico ico-handshake"></span> Partenariats &amp; Publicité</h3>
+                    <p class="pro-card-sub">Placements publicitaires, parrainage d'émissions, chaînes sponsorisées ou co-branding.</p>
+                    <button id="proPartnership" class="pro-contact-btn" type="button">
+                        <span class="cast-emoji"><span class="ico ico-mail"></span></span>
+                        <span><strong>Demander un partenariat</strong><small>rodriguedisasi15@gmail.com</small></span>
+                    </button>
+                    <button id="proAds" class="pro-contact-btn" type="button">
+                        <span class="cast-emoji"><span class="ico ico-megaphone"></span></span>
+                        <span><strong>Espace publicitaire</strong><small>Devis &amp; tarifs en 24h</small></span>
+                    </button>
+                </div>
+
+                <div class="settings-card">
+                    <h3 class="pro-card-title"><span class="ico ico-phone"></span> Contact Business</h3>
+                    <p class="pro-card-sub">Notre équipe commerciale vous répond rapidement.</p>
+                    <button id="proEmail" class="pro-contact-btn" type="button">
+                        <span class="cast-emoji"><span class="ico ico-mail"></span></span>
+                        <span><strong>E-mail</strong><small>rodriguedisasi15@gmail.com</small></span>
+                    </button>
+                    <button id="proWhatsapp" class="pro-contact-btn" type="button">
+                        <span class="cast-emoji"><span class="ico ico-message"></span></span>
+                        <span><strong>WhatsApp</strong><small>+243 997 555 148</small></span>
+                    </button>
+                    <button id="proCall" class="pro-contact-btn" type="button">
+                        <span class="cast-emoji"><span class="ico ico-phone"></span></span>
+                        <span><strong>Appeler</strong><small>+243 840 884 348</small></span>
+                    </button>
+                </div>
+            </section>
+
         </main>
 
+        <!-- ==== NAVIGATION BAS ==== -->
         <nav class="bottom-nav" id="bottomNav">
-            <button class="nav-item active" data-target="view-direct">
-                <span class="icon">📺</span>
-                <span>Direct</span>
+            <button class="nav-item active" data-target="view-direct" type="button">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg></span>
+                <span data-i18n="nav.direct">Direct</span>
             </button>
-            <button class="nav-item" data-target="view-favoris">
-                <span class="icon">⭐</span>
-                <span>Favoris</span>
+            <button class="nav-item" data-target="view-favoris" type="button">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                <span data-i18n="nav.favorites">Favoris</span>
             </button>
-            <button class="nav-item" data-target="view-reglages">
-                <span class="icon">⚙️</span>
-                <span>Réglages</span>
+            <button class="nav-item" data-target="view-abonnement" type="button">
+                <span class="nav-icon"><span class="ico ico-diamond"></span></span>
+                <span data-i18n="nav.subs">Abonnements</span>
+            </button>
+            <button class="nav-item" data-target="view-pro" type="button">
+                <span class="nav-icon"><span class="ico ico-briefcase"></span></span>
+                <span data-i18n="nav.pro">Espace Pro</span>
+            </button>
+            <button class="nav-item" data-target="view-reglages" type="button">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                <span data-i18n="nav.settings">Réglages</span>
             </button>
         </nav>
 
         <script src="cordova.js"></script>
+        <script src="js/security.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+        <script src="js/i18n.js"></script>
         <script src="js/index.js"></script>
     </body>
 </html>

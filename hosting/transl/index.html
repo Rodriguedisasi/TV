@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0A0E17" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Traduction" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon.svg" />
+  <title>Rod'ss Traduction</title>
+  <link rel="stylesheet" href="style.css?v=21" />
+</head>
+<body data-theme="dark">
+  <div class="app">
+    <header class="app-header">
+      <div class="logo-badge">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#FFD400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+      </div>
+      <div class="header-text-block">
+        <h1 class="title"><span class="brand">Rod'ss</span> Traduction</h1>
+        <p class="subtitle" id="headerSubtitle">EN <span class="ico ico-arrow-right"></span> FR</p>
+      </div>
+      <span class="offline-badge" id="offlineBadge" hidden>HORS-LIGNE</span>
+      <span class="live-dot" id="liveDot" hidden></span>
+      <button id="installButton" class="icon-button install-button" type="button" hidden aria-label="Installer">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFD400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12" />
+          <path d="m7 10 5 5 5-5" />
+          <path d="M5 21h14" />
+        </svg>
+      </button>
+      <div class="header-actions">
+        <button id="userButton" class="icon-button" type="button" aria-label="Compte" title="Se connecter / Se déconnecter">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFD400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </button>
+        <button id="themeButton" class="icon-button theme-pill" type="button" aria-label="Changer de thème" title="Changer de thème" aria-pressed="false">
+          <svg id="themeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+          <span class="theme-button-label" id="themeButtonLabel">Sombre</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- ===== VUE TRADUIRE ===== -->
+      <section class="view active" id="view-translate">
+        <div class="lang-bar">
+          <select id="sourceLang" class="lang-select" aria-label="Langue source"></select>
+          <button id="swapLang" class="swap-button" type="button" aria-label="Inverser">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3 4 7l4 4" />
+              <path d="M4 7h16" />
+              <path d="m16 21 4-4-4-4" />
+              <path d="M20 17H4" />
+            </svg>
+          </button>
+          <select id="targetLang" class="lang-select" aria-label="Langue cible"></select>
+        </div>
+        <p class="lang-hint">
+          <span class="hint-dot offline"></span> hors-ligne (dictionnaire EN/FR)
+          &nbsp;·&nbsp;
+          <span class="hint-dot online"></span> en ligne (internet requis)
+        </p>
+
+        <div class="translate-grid">
+          <div class="translate-col capture-col">
+          <p class="section-label">ÉCRAN CAPTURÉ</p>
+          <div class="card screen-card">
+          <div class="screen-frame" id="screenFrame">
+            <video id="screenVideo" class="screen-video" playsinline muted hidden></video>
+            <img id="screenImage" class="screen-image" alt="" hidden />
+            <div class="screen-placeholder" id="screenPlaceholder">
+              <svg class="ph-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#7C89A3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <path d="m21 15-5-5L5 21" />
+              </svg>
+              <p class="ph-title">Importer une image ou une photo à traduire</p>
+              <div class="import-actions">
+                <button id="importFileBtn" class="import-btn" type="button">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                  Fichier
+                </button>
+                <button id="importCameraBtn" class="import-btn" type="button">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Photo
+                </button>
+              </div>
+              <span class="import-formats">JPG · PNG · WebP · GIF · BMP · HEIC · AVIF · SVG</span>
+            </div>
+            <div class="overlay-layer" id="overlayLayer"></div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button id="captureButton" class="capture-button" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg>
+            <span id="captureLabel">Partager l'écran</span>
+          </button>
+          <button id="scanButton" class="scan-button is-locked" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+            </svg>
+            <span id="scanLabel">Scanner</span>
+          </button>
+          <button id="regionButton" class="auto-button is-locked" type="button" aria-label="Sélectionner une zone" title="Sélectionner une zone à traduire">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="3" width="6" height="6" rx="1" />
+              <rect x="15" y="15" width="6" height="6" rx="1" />
+              <rect x="3" y="15" width="6" height="6" rx="1" />
+            </svg>
+          </button>
+          <button id="autoButton" class="auto-button is-locked" type="button" aria-label="Auto">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="12 7 12 12 15 14" />
+            </svg>
+          </button>
+          <button id="overlayToggle" class="auto-button is-locked" type="button" aria-label="Afficher les traductions sur écran">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="6" width="18" height="12" rx="1.8" />
+              <path d="m3 9 18 6" />
+            </svg>
+          </button>
+          <button id="imageButton" class="auto-button" type="button" aria-label="Importer une image" title="Importer une image ou une photo à traduire">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="m21 15-5-5L5 21" />
+            </svg>
+          </button>
+        </div>
+          </div>
+
+          <div class="translate-col text-col">
+        <p class="section-label" id="sourceLabel">TEXTE DÉTECTÉ (EN)</p>
+        <div class="card">
+          <div class="lang-row">
+            <span class="lang-flag" id="sourceFlag">EN</span>
+            <span class="lang-label" id="sourceLangName">Anglais</span>
+            <div class="lang-row-actions">
+              <button id="sourceMic" class="mini-button" type="button" aria-label="Dicter à voix haute" title="Dicter à voix haute">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                </svg>
+              </button>
+              <button id="sourceSpeak" class="mini-button" type="button" hidden aria-label="Écouter le texte source">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                </svg>
+              </button>
+              <span class="confidence" id="confidence" hidden></span>
+              <button id="clearButton" class="text-button" type="button" hidden><span class="ico ico-x"></span> Effacer</button>
+            </div>
+          </div>
+          <textarea
+            id="sourceInput"
+            class="source-input"
+            placeholder="En attente de capture ou saisie..."
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="none"
+          ></textarea>
+        </div>
+
+        <p class="section-label" id="targetLabel">TRADUCTION (FR)</p>
+        <div class="card result-card">
+          <div class="lang-row">
+            <span class="lang-flag" id="targetFlag">FR</span>
+            <span class="lang-label accent" id="targetLangName">Français</span>
+          </div>
+          <div id="resultBox">
+            <p class="result-text result-placeholder" id="resultText">La traduction apparaîtra ici...</p>
+          </div>
+          <div class="result-actions" id="resultActions" hidden>
+            <button id="copyButton" class="result-action" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              Copier
+            </button>
+            <button id="speakButton" class="result-action" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+              Écouter
+            </button>
+            <button id="shareButton" class="result-action" type="button">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              Partager
+            </button>
+          </div>
+        </div>
+
+        <button id="translateButton" class="translate-button" type="button" disabled>
+          <span class="spinner" id="buttonSpinner" hidden></span>
+          <svg id="buttonIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 3 21 3 21 8" />
+            <line x1="4" y1="20" x2="21" y2="3" />
+            <polyline points="21 16 21 21 16 21" />
+            <line x1="15" y1="15" x2="21" y2="21" />
+            <line x1="4" y1="4" x2="9" y2="9" />
+          </svg>
+          <span class="translate-button-text" id="buttonLabel">Traduire</span>
+        </button>
+          </div>
+        </div>
+
+        <p class="section-label">DEMANDER À L'IA</p>
+        <div class="card ai-card">
+          <div class="ai-head">
+            <span class="ai-badge" id="aiBadge">IA GRATUITE</span>
+            <span class="ai-key-hint" id="aiKeyHint"></span>
+          </div>
+          <textarea
+            id="aiInput"
+            class="ai-input"
+            placeholder="Pose une question à l'IA (elle voit la traduction en cours)..."
+            spellcheck="false"
+            autocorrect="off"
+          ></textarea>
+          <div class="ai-actions">
+            <button id="aiAskButton" class="ai-ask-button" type="button" disabled>
+              <span class="spinner" id="aiSpinner" hidden></span>
+              <svg id="aiAskIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z" />
+              </svg>
+              <span class="ai-ask-text" id="aiAskLabel">Demander</span>
+            </button>
+            <button id="aiClearButton" class="text-button" type="button" hidden><span class="ico ico-x"></span> Effacer</button>
+          </div>
+          <div id="aiAnswer" class="ai-answer" hidden></div>
+        </div>
+
+        <div class="promo-banner" id="promoBanner" hidden>
+          <div class="promo-text">
+            <strong><span class="ico ico-crown"></span> Passez à PREMIUM</strong>
+            <span>IA illimitée, langues exclusives, OCR premium, sans publicité</span>
+          </div>
+          <button id="promoUpgrade" class="promo-btn" type="button">Découvrir <span class="ico ico-arrow-right"></span></button>
+        </div>
+
+        <p class="footer-note">
+          Touche l'<b>icône jaune flottante</b> pour ouvrir le menu rapide.
+          <b>Scanner</b> traduit l'écran partagé, <b>importer une image</b>
+          (ou coller avec Ctrl+V) permet de traduire une photo ou une capture
+          sans partage d'écran. La capture d'écran nécessite localhost ou https.
+        </p>
+      </section>
+
+      <!-- ===== VUE HISTORIQUE ===== -->
+      <section class="view" id="view-history">
+        <div class="view-head">
+          <p class="section-label">HISTORIQUE</p>
+          <div class="view-head-actions">
+            <button id="exportHistory" class="text-button" type="button"><span class="ico ico-download"></span> Exporter</button>
+            <button id="clearHistory" class="text-button" type="button"><span class="ico ico-x"></span> Tout effacer</button>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <!-- ===== VUE ABONNEMENT ===== -->
+      <section class="view" id="view-abonnement">
+        <p class="section-label">ABONNEMENT</p>
+
+        <div class="subs-hero" id="subsHero">
+          <div class="subs-hero-badge" id="subsCurrentBadge"><span class="ico ico-gift"></span> GRATUIT</div>
+          <h3 id="subsCurrentTitle">Vous êtes sur le plan GRATUIT</h3>
+          <p>Passez à <strong>PRO</strong> ou <strong>PREMIUM</strong> pour débloquer la traduction en direct, l'IA illimitée et bien plus.</p>
+          <p class="subs-devices" id="subsDevices" hidden></p>
+        </div>
+
+        <div class="plans-grid" id="plansGrid">
+          <!-- Injecté dynamiquement -->
+        </div>
+
+        <div class="subs-note">
+          <p><span class="ico ico-lightbulb"></span> <strong>Comment ça marche ?</strong></p>
+          <p>1. Choisissez votre formule ci-dessus.</p>
+          <p>2. Payez par Mobile Money (M-Pesa, Airtel Money, Orange Money) au numéro affiché.</p>
+          <p>3. Envoyez le reçu sur WhatsApp +243 997 555 148.</p>
+          <p>4. Votre compte est activé sous 24h et les fonctions premium se débloquent !</p>
+        </div>
+      </section>
+
+      <!-- ===== VUE RÉGLAGES ===== -->
+      <section class="view" id="view-settings">
+        <p class="section-label">COMPTE</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Connexion</span>
+              <span class="setting-desc" id="accountDesc">Non connecté</span>
+              <span class="vip-badge" id="vipBadge" hidden><span class="ico ico-crown"></span> VIP</span>
+            </div>
+            <button id="accountToggle" class="text-button" type="button"><span class="ico ico-user"></span> Se connecter</button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Thème rapide</span>
+              <span class="setting-desc">Basculer clair/sombre</span>
+            </div>
+            <button id="themeToggleBtn" class="text-button" type="button"><span class="ico ico-moon"></span> Changer</button>
+          </div>
+        </div>
+
+        <p class="section-label">ABONNEMENT</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Formule actuelle</span>
+              <span class="setting-desc" id="settingSubscription"><span class="ico ico-gift"></span> GRATUIT</span>
+            </div>
+            <button id="btnManageSubs" class="text-button" type="button"><span class="ico ico-diamond"></span> Gérer</button>
+          </div>
+        </div>
+
+        <p class="section-label">APPARENCE</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Thème</span>
+              <span class="setting-desc">Clair ou sombre</span>
+            </div>
+            <div class="segmented" id="themeToggle">
+              <button data-theme="dark" type="button"><span class="ico ico-moon"></span> Sombre</button>
+              <button data-theme="light" type="button"><span class="ico ico-sun"></span> Clair</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="section-label">TRADUCTION À LA SAISIE</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Traduction automatique</span>
+              <span class="setting-desc">Traduit pendant que tu écris</span>
+            </div>
+            <label class="setting-switch">
+              <input id="autoTypingToggle" type="checkbox" checked />
+            </label>
+          </div>
+        </div>
+
+        <p class="section-label">CORRECTION AUTOMATIQUE</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Corriger le texte source</span>
+              <span class="setting-desc" id="autoCorrectDesc">Corrige fautes et erreurs OCR avant la traduction (dictionnaire + en ligne)</span>
+            </div>
+            <label class="setting-switch">
+              <input id="autoCorrectToggle" type="checkbox" checked />
+            </label>
+          </div>
+        </div>
+
+        <p class="section-label">QUALITÉ OCR</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Prétraitement de l'image</span>
+              <span class="setting-desc">Netteté, contraste et agrandissement avant reconnaissance</span>
+            </div>
+            <label class="setting-switch">
+              <input id="preprocessToggle" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Détection auto de la langue</span>
+              <span class="setting-desc">Choisit la langue source la plus probable (script + vocabulaire)</span>
+            </div>
+            <label class="setting-switch">
+              <input id="autoDetectToggle" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Nettoyage du texte</span>
+              <span class="setting-desc">Fusionne les lignes coupées et corrige la ponctuation</span>
+            </div>
+            <label class="setting-switch">
+              <input id="cleanTextToggle" type="checkbox" checked />
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">OCR haute précision</span>
+              <span class="setting-desc">Agrandissement et netteté renforcés (PRO / PREMIUM)</span>
+            </div>
+            <label class="setting-switch">
+              <input id="ocrHqToggle" type="checkbox" />
+            </label>
+          </div>
+        </div>
+
+        <p class="section-label">ASSISTANT IA</p>
+        <div class="card settings-card">
+          <div class="setting-text">
+            <span class="setting-title">Fonctionnement</span>
+            <span class="setting-desc">Sans clé : IA gratuite via Pollinations. Ajoute une clé Gemini pour utiliser Google à la place.</span>
+          </div>
+          <div class="setting-text">
+            <span class="setting-title">Clé API Gemini (facultatif)</span>
+            <span class="setting-desc">Gratuite sur aistudio.google.com/apikey — stockée uniquement sur l'appareil</span>
+          </div>
+          <div class="auth-input-wrap">
+            <input id="geminiKeyInput" class="ai-field" type="password" placeholder="AIza..." autocomplete="off" spellcheck="false" autocapitalize="none" />
+            <button type="button" class="auth-toggle" id="toggleGeminiKey" aria-label="Afficher la clé API" aria-pressed="false">
+              <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68" />
+                <path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3.5 6 10 6a9.74 9.74 0 0 0 5.39-1.61" />
+                <line x1="2" y1="2" x2="22" y2="22" />
+              </svg>
+            </button>
+          </div>
+          <div class="setting-text">
+            <span class="setting-title">Modèle Gemini</span>
+            <span class="setting-desc">Utilisé seulement si une clé est renseignée</span>
+          </div>
+          <input id="geminiModelInput" class="ai-field" type="text" placeholder="gemini-2.5-flash" autocomplete="off" spellcheck="false" autocapitalize="none" />
+        </div>
+
+        <p class="section-label">SCAN AUTOMATIQUE</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Intervalle</span>
+              <span class="setting-desc"><span id="intervalValue">4</span> secondes entre 2 scans</span>
+            </div>
+          </div>
+          <input id="intervalRange" class="range" type="range" min="1" max="10" step="1" value="4" />
+        </div>
+
+        <p class="section-label">BOUTON FLOTTANT</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Taille</span>
+              <span class="setting-desc"><span id="floatSizeValue">58</span> px</span>
+            </div>
+          </div>
+          <input id="floatSizeRange" class="range" type="range" min="44" max="76" step="2" value="58" />
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title">Opacité</span>
+              <span class="setting-desc"><span id="floatOpacityValue">100</span>%</span>
+            </div>
+          </div>
+          <input id="floatOpacityRange" class="range" type="range" min="30" max="100" step="5" value="100" />
+          <label class="setting-switch" style="display:flex;align-items:center;gap:10px;margin-top:8px">
+            <input id="floatVisibleToggle" type="checkbox" checked />
+            <span class="setting-title">Afficher le bouton flottant</span>
+          </label>
+        </div>
+
+        <p class="section-label">DONNÉES</p>
+        <div class="card settings-card">
+          <button id="exportHistory2" class="setting-button" type="button" style="color:var(--accent)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+            </svg>
+            Partager l'historique
+          </button>
+          <button id="clearHistory2" class="setting-button" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+            Effacer l'historique
+          </button>
+        </div>
+
+        <p class="section-label">AIDE</p>
+        <div class="card settings-card">
+          <button id="openHelp" class="setting-button help-open" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            Comment utiliser l'application
+          </button>
+        </div>
+
+        <p class="section-label">À PROPOS</p>
+        <div class="card settings-card">
+          <div class="setting-row">
+            <div class="setting-text">
+              <span class="setting-title"><span class="brand">Rod'ss</span> Traduction</span>
+              <span class="setting-desc">Version 1.1.0 · OCR local (Tesseract) + traduction hors-ligne &amp; MyMemory</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== VUE AIDE ===== -->
+      <section class="view" id="view-help">
+        <div class="view-head">
+          <p class="section-label">AIDE · MODE D'EMPLOI</p>
+          <button id="helpBack" class="text-button" type="button"><span class="ico ico-arrow-left"></span> Retour</button>
+        </div>
+
+        <div class="card settings-card">
+          <div class="help-intro">
+            <span class="setting-title">Bienvenue</span>
+            <span class="setting-desc">Cette application traduit le texte à l'écran (OCR) ou saisi à la main, dans plus de 20 langues. Voici comment utiliser chaque fonction.</span>
+          </div>
+          <div class="help-tip">
+            <span class="help-emoji"><span class="ico ico-lightbulb"></span></span>
+            <span><b>Astuce :</b> le dictionnaire hors-ligne fonctionne sans internet pour l'anglais et le français ; les autres langues nécessitent une connexion.</span>
+          </div>
+        </div>
+
+        <div id="helpToc" class="card settings-card help-toc" hidden>
+          <span class="setting-title"><span class="ico ico-books"></span> Sommaire</span>
+          <div class="toc-list" id="helpTocList"></div>
+        </div>
+
+        <p class="section-label">1. TRADUIRE UN TEXTE</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Choisis la <b>langue source</b> et la <b>langue cible</b> en haut de l'écran (ou inverse-les avec le bouton <span class="ico ico-swap"></span>).</li>
+            <li>Écris ou colle du texte dans la zone <b>TEXTE DÉTECTÉ</b>.</li>
+            <li>Appuie sur <b>Traduire</b>. La traduction apparaît dans <b>TRADUCTION</b>.</li>
+            <li>Avec <b>Traduction automatique</b> activée (Réglages), la traduction se fait pendant la saisie.</li>
+          </ol>
+          <div class="help-tip">
+            <span class="help-emoji"><span class="ico ico-mic"></span></span>
+            <span>Le bouton micro dicte le texte à voix haute. Les boutons <b>Copier</b>, <b>Écouter</b> et <b>Partager</b> agissent sur le résultat.</span>
+          </div>
+        </div>
+
+        <p class="section-label">2. TRADUIRE L'ÉCRAN</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Appuie sur <b>Partager l'écran</b> et choisis la fenêtre à traduire.</li>
+            <li>Appuie sur <b>Scanner</b> : le texte de la capture est reconnu puis traduit.</li>
+            <li>Active <b>Auto</b> pour rescanner régulièrement, ou la <b>surimpression</b> pour afficher la traduction directement sur l'écran.</li>
+          </ol>
+          <div class="help-tip">
+            <span class="help-emoji"><span class="ico ico-info"></span></span>
+            <span>Le partage d'écran nécessite d'être servi en <b>localhost</b> ou <b>https</b>. Sinon, utilise l'import d'image.</span>
+          </div>
+        </div>
+
+        <p class="section-label">3. TRADUIRE UNE IMAGE OU UNE PHOTO</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Appuie sur <b>Importer une image</b> (icône image) et choisis un fichier ou prends une photo.</li>
+            <li>Lance le <b>Scanner</b> pour extraire et traduire le texte.</li>
+          </ol>
+          <div class="help-tip">
+            <span class="help-emoji"><span class="ico ico-clipboard"></span></span>
+            <span><b>Raccourci :</b> tu peux aussi <b>coller une image avec Ctrl+V</b> dans l'application.</span>
+          </div>
+        </div>
+
+        <p class="section-label">4. SÉLECTIONNER UNE ZONE PRÉCISE</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Appuie sur le bouton <b>zone</b> (les quatre coins).</li>
+            <li>Dessine un cadre sur la partie de l'image à traduire.</li>
+            <li>Lance le <b>Scanner</b> : seule la zone sélectionnée est analysée.</li>
+          </ol>
+        </div>
+
+        <p class="section-label">5. SCAN AUTOMATIQUE</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Après un partage d'écran, active <b>Auto</b> pour retraduire en continu.</li>
+            <li>Règle la fréquence avec <b>Intervalle</b> dans les Réglages (1 à 10 secondes).</li>
+          </ol>
+        </div>
+
+        <p class="section-label">6. BOUTON FLOTTANT</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Appuie sur l'<b>icône jaune flottante</b> pour ouvrir le menu rapide.</li>
+            <li>Le menu permet de lancer le scan, changer de langue, copier, écouter, ou arrêter le partage.</li>
+            <li>Déplace le bouton en le faisant glisser ; sa <b>taille</b>, son <b>opacité</b> et sa <b>visibilité</b> se règlent dans les Réglages.</li>
+          </ol>
+        </div>
+
+        <p class="section-label">7. DEMANDER À L'IA</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Pose une question à l'IA : elle voit la traduction en cours.</li>
+            <li>Sans clé, l'IA gratuite (Pollinations) est utilisée.</li>
+            <li>Pour Google Gemini, ajoute une <b>clé API</b> dans Réglages <span class="ico ico-arrow-right"></span> Assistant IA.</li>
+          </ol>
+        </div>
+
+        <p class="section-label">8. HISTORIQUE &amp; DONNÉES</p>
+        <div class="card settings-card">
+          <ol class="help-list">
+            <li>Retrouve tes traductions dans l'onglet <b>Historique</b>.</li>
+            <li><b>Exporter</b> les partage dans une autre application.</li>
+            <li><b>Tout effacer</b> supprime définitivement l'historique.</li>
+          </ol>
+        </div>
+
+        <p class="section-label">CONSEILS POUR UN MEILLEUR OCR</p>
+        <div class="card settings-card">
+          <ul class="help-list">
+            <li>Utilise une image nette, bien éclairée et de préférence bien cadrée.</li>
+            <li>Garde le <b>prétraitement de l'image</b> activé (netteté + contraste).</li>
+            <li>Vérifie la langue choisie avant de scanner.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="translate" type="button">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+          <path d="M8 12h6M8 16h4" />
+        </svg>
+        <span>Traduire</span>
+      </button>
+      <button class="nav-item" data-view="history" type="button">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v5h5" />
+          <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+          <path d="M12 7v5l4 2" />
+        </svg>
+        <span>Historique</span>
+      </button>
+      <button class="nav-item" data-view="abonnement" type="button">
+        <span class="nav-emoji"><span class="ico ico-diamond"></span></span>
+        <span>Abonnement</span>
+      </button>
+      <button class="nav-item" data-view="settings" type="button">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+        <span>Réglages</span>
+      </button>
+    </nav>
+  </div>
+
+  <button id="floatButton" class="float-button" type="button" aria-label="Traduire tout l'écran">
+    <svg id="floatIcon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+    <span class="float-spinner" id="floatSpinner" hidden></span>
+  </button>
+
+  <div id="floatMenu" class="float-menu" hidden>
+    <div class="float-menu-header">
+      <span>Réglages du bouton</span>
+      <button class="float-menu-close" id="floatMenuClose" aria-label="Fermer"><span class="ico ico-x"></span></button>
+    </div>
+
+    <div class="float-menu-body">
+      <div class="float-menu-section">
+        <span class="float-section-label">Langues</span>
+        <div class="float-lang-bar">
+          <select id="floatSourceLang" class="float-lang-select" aria-label="Langue source"></select>
+          <button id="floatSwapLang" class="float-lang-swap" type="button" aria-label="Inverser">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3 4 7l4 4" />
+              <path d="M4 7h16" />
+              <path d="m16 21 4-4-4-4" />
+              <path d="M20 17H4" />
+            </svg>
+          </button>
+          <select id="floatTargetLang" class="float-lang-select" aria-label="Langue cible"></select>
+        </div>
+      </div>
+
+      <button class="float-menu-item" id="floatToggleAuto">
+        <span class="float-menu-icon"><span class="ico ico-play"></span></span>
+        <span class="float-menu-label" id="floatToggleAutoLabel">Lancer la traduction auto</span>
+      </button>
+
+      <button class="float-menu-item" id="floatTranslateNow">
+        <span class="float-menu-icon"><span class="ico ico-repeat"></span></span>
+        <span class="float-menu-label">Traduire tout l'écran maintenant</span>
+      </button>
+
+      <button class="float-menu-item" id="floatAutoTyping">
+        <span class="float-menu-icon"><span class="ico ico-zap"></span></span>
+        <span class="float-menu-label">Auto-traduction à la saisie</span>
+        <span class="float-menu-value" id="floatAutoTypingValue">OUI</span>
+      </button>
+
+      <button class="float-menu-item" id="floatAutoCorrect">
+        <span class="float-menu-icon"><span class="ico ico-check-circle"></span></span>
+        <span class="float-menu-label">Correction automatique</span>
+        <span class="float-menu-value" id="floatAutoCorrectValue">OUI</span>
+      </button>
+
+      <button class="float-menu-item" id="floatSelectRegion">
+        <span class="float-menu-icon"><span class="ico ico-ruler"></span></span>
+        <span class="float-menu-label">Sélectionner une zone</span>
+      </button>
+
+      <button class="float-menu-item" id="floatImportImage">
+        <span class="float-menu-icon"><span class="ico ico-image"></span></span>
+        <span class="float-menu-label">Importer une image</span>
+      </button>
+
+      <button class="float-menu-item" id="floatToggleOverlay">
+        <span class="float-menu-icon"><span class="ico ico-eye"></span></span>
+        <span class="float-menu-label" id="floatToggleOverlayLabel">Masquer surimpression</span>
+      </button>
+
+      <button class="float-menu-item" id="floatCopyResult">
+        <span class="float-menu-icon"><span class="ico ico-clipboard"></span></span>
+        <span class="float-menu-label">Copier la traduction</span>
+      </button>
+
+      <button class="float-menu-item" id="floatSpeakResult">
+        <span class="float-menu-icon"><span class="ico ico-volume"></span></span>
+        <span class="float-menu-label">Écouter la traduction</span>
+      </button>
+
+      <div class="float-menu-item float-menu-range">
+        <div class="float-menu-range-head">
+          <span class="float-menu-icon"><span class="ico ico-timer"></span></span>
+          <span class="float-menu-label">Intervalle auto</span>
+          <span class="float-menu-value" id="floatIntervalValue">4s</span>
+        </div>
+        <input type="range" id="floatIntervalRange" min="2" max="10" step="1" class="float-range">
+      </div>
+
+      <div class="float-menu-item float-menu-range">
+        <div class="float-menu-range-head">
+          <span class="float-menu-icon"><span class="ico ico-letters"></span></span>
+          <span class="float-menu-label">Taille du bouton</span>
+          <span class="float-menu-value" id="floatSizeValueMenu">58px</span>
+        </div>
+        <input type="range" id="floatSizeRangeMenu" min="44" max="76" step="2" class="float-range">
+      </div>
+
+      <div class="float-menu-item float-menu-range">
+        <div class="float-menu-range-head">
+          <span class="float-menu-icon"><span class="ico ico-moon"></span></span>
+          <span class="float-menu-label">Opacité</span>
+          <span class="float-menu-value" id="floatOpacityValueMenu">100%</span>
+        </div>
+        <input type="range" id="floatOpacityRangeMenu" min="30" max="100" step="5" class="float-range">
+      </div>
+
+      <button class="float-menu-item danger" id="floatStop">
+        <span class="float-menu-icon"><span class="ico ico-stop"></span></span>
+        <span class="float-menu-label">Arrêter le partage</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="floatMenuBackdrop" class="float-menu-backdrop" hidden></div>
+
+  <div id="authModal" class="auth-modal" hidden>
+    <div class="auth-backdrop" id="authBackdrop"></div>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authClose" type="button" aria-label="Fermer"><span class="ico ico-x"></span></button>
+
+      <div class="auth-head">
+        <div class="auth-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#FFD400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        </div>
+        <div class="auth-head-text">
+          <h2 class="auth-title" id="authTitle">Se connecter</h2>
+          <p class="auth-sub" id="authSub">Compte enregistr&eacute; sur cet appareil uniquement.</p>
+        </div>
+      </div>
+
+      <form id="authForm" novalidate>
+        <label class="auth-field">
+          <span class="auth-field-label" id="authIdLabel">Email ou nom d'utilisateur</span>
+          <input id="authIdentifier" class="auth-input" type="text" autocomplete="username"
+            spellcheck="false" autocapitalize="none" placeholder="ex. alex@mail.com ou alex" required />
+        </label>
+        <label class="auth-field">
+          <span class="auth-field-label">Mot de passe</span>
+          <div class="auth-input-wrap">
+            <input id="authPassword" class="auth-input" type="password" autocomplete="current-password"
+              placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+            <button type="button" class="auth-toggle" id="toggleAuthPass" aria-label="Afficher le mot de passe" aria-pressed="false">
+              <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68" />
+                <path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3.5 6 10 6a9.74 9.74 0 0 0 5.39-1.61" />
+                <line x1="2" y1="2" x2="22" y2="22" />
+              </svg>
+            </button>
+          </div>
+        </label>
+        <label class="auth-field" id="authConfirmField" hidden>
+          <span class="auth-field-label">Confirmer le mot de passe</span>
+          <div class="auth-input-wrap">
+            <input id="authPassword2" class="auth-input" type="password" autocomplete="new-password"
+              placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            <button type="button" class="auth-toggle" id="toggleAuthPass2" aria-label="Afficher le mot de passe" aria-pressed="false">
+              <svg class="icon-eye" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg class="icon-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 8 10 8a13.16 13.16 0 0 1-1.67 2.68" />
+                <path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3.5 6 10 6a9.74 9.74 0 0 0 5.39-1.61" />
+                <line x1="2" y1="2" x2="22" y2="22" />
+              </svg>
+            </button>
+          </div>
+        </label>
+        <p class="auth-hint" id="authHint" hidden></p>
+        <p class="auth-error" id="authError" hidden></p>
+        <button class="auth-submit" id="authSubmit" type="submit">
+          <span class="spinner auth-submit-spinner" id="authSubmitSpinner"></span>
+          <span class="auth-submit-label" id="authSubmitLabel">Se connecter</span>
+        </button>
+        <button class="auth-forgot" id="authForgot" type="button" hidden><span class="ico ico-lock"></span> Mot de passe oubli&eacute; ?</button>
+      </form>
+      <p class="auth-switch">
+        <span id="authSwitchText">Pas encore de compte ?</span>
+        <button class="auth-link" id="authSwitch" type="button"><span class="ico ico-plus"></span> Cr&eacute;er un compte</button>
+      </p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <div id="confirmModal" class="confirm-modal" hidden>
+    <div class="confirm-backdrop" id="confirmBackdrop"></div>
+    <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <h3 class="confirm-title" id="confirmTitle">Confirmer</h3>
+      <p class="confirm-message" id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button id="confirmCancel" class="confirm-btn" type="button"><span class="ico ico-x"></span> Annuler</button>
+        <button id="confirmOk" class="confirm-btn primary" type="button"><span class="ico ico-check"></span> OK</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="imageInput" type="file" accept="image/*,.heic,.heif,.avif,.webp,.tif,.tiff,.bmp,.gif,.svg,.jfif,.ico,.png,.jpg,.jpeg" hidden />
+  <input id="photoInput" type="file" accept="image/*" capture="environment" hidden />
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js?v=2"></script>
+  <script src="vendor/tesseract.min.js"></script>
+  <script src="cordova.js"></script>
+  <script src="script.js?v=24"></script>
+</body>
+</html>
