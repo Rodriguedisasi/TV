@@ -1,5 +1,5 @@
 /* ============================================
-   ROD'SS TV â€” Design Premium
+   ROD'SS TV Ã¢â‚¬â€ Design Premium
    ============================================ */
 
 :root {
@@ -85,7 +85,7 @@ img {
 }
 
 /* ============================================
-   Ã‰CRAN D'AUTHENTIFICATION
+   Ãƒâ€°CRAN D'AUTHENTIFICATION
    ============================================ */
 .auth-overlay {
     position: fixed;
@@ -1091,7 +1091,7 @@ img {
 }
 
 /* ============================================
-   EN-TÃŠTE
+   EN-TÃƒÅ TE
    ============================================ */
 .top-bar {
     background: rgba(17, 17, 27, 0.88);
@@ -1221,8 +1221,8 @@ img {
     z-index: 2000;
 }
 
-/* Auto-masquage (app installÃ©e) : boutons du haut + barre du bas
-   disparaissent aprÃ¨s 5 s sans interaction, un appui Ã  l'Ã©cran fait tout revenir */
+/* Auto-masquage (app installÃƒÂ©e) : boutons du haut + barre du bas
+   disparaissent aprÃƒÂ¨s 5 s sans interaction, un appui ÃƒÂ  l'ÃƒÂ©cran fait tout revenir */
 .floating-top-right-group,
 .bottom-nav {
     transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s;
@@ -1252,7 +1252,7 @@ body.ui-hidden-ui .bottom-categories {
     pointer-events: none;
 }
 
-/* Quand l'interface se masque : le voyant rÃ©seau glisse vers le coin */
+/* Quand l'interface se masque : le voyant rÃƒÂ©seau glisse vers le coin */
 body.ui-hidden-ui .net-pill {
     position: fixed;
     top: 16px;
@@ -1377,7 +1377,7 @@ body.ui-hidden-ui .net-pill .dot {
 }
 
 /* ============================================
-   BARRE RECHERCHE & CATÃ‰GORIES
+   BARRE RECHERCHE & CATÃƒâ€°GORIES
    ============================================ */
 .channels-bar {
     background: var(--surface);
@@ -1468,7 +1468,7 @@ body.ui-hidden-ui .net-pill .dot {
     box-shadow: 0 6px 16px rgba(255, 0, 85, 0.35);
 }
 
-/* --- SÃ©parateurs de catÃ©gories (ThÃ¨mes / Pays) --- */
+/* --- SÃƒÂ©parateurs de catÃƒÂ©gories (ThÃƒÂ¨mes / Pays) --- */
 .cat-label {
     flex-shrink: 0;
     align-self: center;
@@ -1483,7 +1483,7 @@ body.ui-hidden-ui .net-pill .dot {
     pointer-events: none;
 }
 
-/* --- SÃ©lecteur de catÃ©gorie (menu dÃ©roulant) --- */
+/* --- SÃƒÂ©lecteur de catÃƒÂ©gorie (menu dÃƒÂ©roulant) --- */
 .category-select {
     flex-shrink: 0;
     max-width: 42%;
@@ -1520,7 +1520,7 @@ body.ui-hidden-ui .net-pill .dot {
     .category-select { display: none; }
 }
 
-/* --- Sentinelle de dÃ©filement (chargement par lots) --- */
+/* --- Sentinelle de dÃƒÂ©filement (chargement par lots) --- */
 .grid-sentinel {
     flex-shrink: 0;
     width: 2px;
@@ -1530,7 +1530,7 @@ body.ui-hidden-ui .net-pill .dot {
 }
 
 /* ============================================
-   GRILLE DES CHAÃŽNES
+   GRILLE DES CHAÃƒÅ½NES
    ============================================ */
 .channels-grid-bar {
     display: flex;
@@ -1598,7 +1598,7 @@ body.ui-hidden-ui .net-pill .dot {
 }
 
 /* ============================================
-   CATÃ‰GORIES (bas de la liste des chaÃ®nes)
+   CATÃƒâ€°GORIES (bas de la liste des chaÃƒÂ®nes)
    ============================================ */
 .bottom-categories {
     display: flex;
@@ -1652,9 +1652,9 @@ body.immersive-mode .bottom-categories {
     color: var(--text);
 }
 
-/* --- Filtre par pays (Ã  cÃ´tÃ© des catÃ©gories) --- */
+/* --- Filtre par pays (ÃƒÂ  cÃƒÂ´tÃƒÂ© des catÃƒÂ©gories) --- */
 
-/* --- Recherche des chaÃ®nes (barre du bas) --- */
+/* --- Recherche des chaÃƒÂ®nes (barre du bas) --- */
 .bottom-search {
     position: relative;
     flex: 1 1 220px;
@@ -1692,7 +1692,7 @@ body.immersive-mode .bottom-categories {
     color: rgba(139, 139, 164, 0.7);
 }
 
-/* --- Liste des chaÃ®nes (feuille par catÃ©gorie) --- */
+/* --- Liste des chaÃƒÂ®nes (feuille par catÃƒÂ©gorie) --- */
 .chlist-item {
     display: flex;
     align-items: center;
@@ -1861,7 +1861,7 @@ body.immersive-mode .bottom-categories {
 }
 
 /* ============================================
-   CONTRÃ”LES ZOOM
+   CONTRÃƒâ€LES ZOOM
    ============================================ */
 .zoom-controls {
     display: flex;
@@ -1971,7 +1971,7 @@ body.immersive-mode .bottom-categories {
     text-overflow: ellipsis;
 }
 
-/* Badge qualitÃ© (haute qualitÃ© premium) */
+/* Badge qualitÃƒÂ© (haute qualitÃƒÂ© premium) */
 .quality-badge {
     display: inline-block;
     margin-top: 6px;
@@ -2076,7 +2076,7 @@ body.immersive-mode .bottom-categories {
 }
 
 /* ============================================
-   FAVORIS & RÃ‰GLAGES
+   FAVORIS & RÃƒâ€°GLAGES
    ============================================ */
 .settings-card {
     background: var(--surface);
@@ -2263,7 +2263,7 @@ body.immersive-mode .bottom-categories {
 }
 
 /* ============================================
-   VERROUS & ACCÃˆS ABONNEMENTS
+   VERROUS & ACCÃƒË†S ABONNEMENTS
    ============================================ */
 .channel-chip-item.locked {
     opacity: 0.62;
@@ -2282,7 +2282,7 @@ body.immersive-mode .bottom-categories {
     filter: drop-shadow(0 0 4px rgba(255, 180, 0, 0.6));
 }
 
-/* ChaÃ®nes dont le flux a Ã©chouÃ© : on les garde visibles mais hors service */
+/* ChaÃƒÂ®nes dont le flux a ÃƒÂ©chouÃƒÂ© : on les garde visibles mais hors service */
 .channel-chip-item.broken {
     opacity: 0.42;
     border-style: dotted;
@@ -2416,7 +2416,7 @@ body.immersive-mode .bottom-categories {
     color: var(--muted);
 }
 
-/* QualitÃ© du plan */
+/* QualitÃƒÂ© du plan */
 .plan-quality {
     align-self: flex-start;
     display: inline-flex;
@@ -2740,7 +2740,7 @@ body.immersive-mode .player-wrapper {
     50%      { transform: translateY(-6px); }
 }
 
-/* --- Boutons principaux (dÃ©gradÃ©) --- */
+/* --- Boutons principaux (dÃƒÂ©gradÃƒÂ©) --- */
 .action-btn::before {
     content: "";
     position: absolute;
@@ -2763,7 +2763,7 @@ body.immersive-mode .player-wrapper {
     animation: btnPulse 1.8s ease-in-out infinite;
 }
 
-/* --- Bouton fantÃ´me --- */
+/* --- Bouton fantÃƒÂ´me --- */
 .btn-ghost {
     position: relative;
     overflow: hidden;
@@ -2796,14 +2796,14 @@ body.immersive-mode .player-wrapper {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.floating-menu-btn { /* respiration retirÃ©e sur le menu */ }
+.floating-menu-btn { /* respiration retirÃƒÂ©e sur le menu */ }
 
 .floating-profile-btn:hover {
     transform: scale(1.12);
     animation: btnPulse 1.6s ease-in-out infinite;
 }
 
-/* --- Puce de catÃ©gorie --- */
+/* --- Puce de catÃƒÂ©gorie --- */
 .cat-chip:hover {
     transform: translateY(-2px);
     border-color: var(--accent);
@@ -2820,7 +2820,7 @@ body.immersive-mode .player-wrapper {
     animation: btnPulse 2.4s ease-in-out infinite;
 }
 
-/* --- Puce de chaÃ®ne --- */
+/* --- Puce de chaÃƒÂ®ne --- */
 .channel-chip-item {
     position: relative;
     overflow: hidden;
@@ -2903,7 +2903,7 @@ body.immersive-mode .player-wrapper {
     animation: iconBounce 1.6s ease-in-out infinite;
 }
 
-/* --- Menu dÃ©roulant --- */
+/* --- Menu dÃƒÂ©roulant --- */
 .dropdown-menu button {
     position: relative;
     overflow: hidden;
@@ -2938,7 +2938,7 @@ body.immersive-mode .player-wrapper {
     transform: scaleY(1);
 }
 
-/* --- IcÃ´ne mot de passe --- */
+/* --- IcÃƒÂ´ne mot de passe --- */
 .toggle-password-btn {
     transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -2953,7 +2953,7 @@ body.immersive-mode .player-wrapper {
 }
 
 /* ============================================
-   RÃ‰DUCTION D'ANIMATION
+   RÃƒâ€°DUCTION D'ANIMATION
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -2963,7 +2963,7 @@ body.immersive-mode .player-wrapper {
 }
 
 /* ============================================
-   RESPONSIVE â€” TÃ‰LÃ‰PHONES
+   RESPONSIVE Ã¢â‚¬â€ TÃƒâ€°LÃƒâ€°PHONES
    ============================================ */
 @media (max-width: 520px) {
     .top-bar {
@@ -3062,7 +3062,7 @@ body.immersive-mode .player-wrapper {
     .bottom-nav { min-height: 46px; }
     .nav-item { font-size: 9px; }
 }
-/* --- Bande de chaÃ®nes masquÃ©e (seul le lien reste) --- */
+/* --- Bande de chaÃƒÂ®nes masquÃƒÂ©e (seul le lien reste) --- */
 .channels-bar,
 .channels-grid-bar {
     display: none;
